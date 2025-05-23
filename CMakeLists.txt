@@ -89,14 +89,14 @@ oomph_add_executable(
 
 
 #--------------------------------------------------------------
-# Add additional compiler flags for this version.
-# NOTE: We can't use the name of exeuctable directly because
+# Add additional compiler flags for this executable.
+# NOTE: We can't use the name of the executable directly because
 # our wrapper oomph_add_excutable(...) creates a different
 # (hashed) name for it to avoid internal clashes (don't ask!).
 # You therefore have to obtain it from the oomph_get_target_name(...)
 # function whose first argument is the NAME specified in the
 # oomph_add_executable(...) function above; the second argument
-# returns the hashed name that can used for "raw" cmake function
+# returns the hashed name that can then used for "raw" cmake function
 # calls
 #--------------------------------------------------------------
 
