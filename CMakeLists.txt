@@ -8,9 +8,9 @@
 #============================================================
 
 #--------------------------------------------------------------
-# Specify minimum cmake version; die if you can't find it...
+# Specify minimum CMake version; die if you can't find it...
 #
-# Note to inexperienced users: cmake requires this flag. If you
+# Note to inexperienced users: CMake requires this flag. If you
 # have no preferences yourself, simply use the value specified
 # in the CMakeLists.txt file in the oomph-lib root directory.
 #
@@ -121,7 +121,7 @@ oomph_add_executable(
 # function oomph_get_target_name(...) whose first argument is the NAME 
 # specified in the oomph_add_executable(...) function above; 
 # the second argument returns the hashed name that can then 
-# used for "raw" cmake function calls.
+# used for "raw" CMake function calls.
 #--------------------------------------------------------------
 
 #---------------------------------------------------------------
