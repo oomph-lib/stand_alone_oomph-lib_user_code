@@ -134,7 +134,7 @@ oomph_get_target_name(one_d_poisson_with_flag HASHED_TARGET_NAME)
 # The driver code contains the macro
 #
 # #ifdef MY_FLAG
-# [...]
+#   [...]
 # #endif
 # 
 # Such flags can be passed to most compilers using the compiler 
@@ -158,3 +158,12 @@ target_compile_definitions(${HASHED_TARGET_NAME} PRIVATE MY_FLAG)
 
 
 
+#--------------------------------------------------------------------------
+# Final comment: The oomphlibConfig.cmake file contains information about
+# all the flags used during the oomph-lib build process. This means
+# in particular that any compiler flags used during this process (PARANOID,
+# RANGE_CHECKING, OOMPH_HAS_MPI, etc.) are available to any driver
+# codes that use this installation. This is demonstrated by the final #ifdef 
+# at the bottom of the driver code where we announce if oomph-lib was 
+# compiled with MPI support or not.
+#--------------------------------------------------------------------------

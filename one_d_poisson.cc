@@ -307,6 +307,14 @@ int main()
 #else
  oomph_info << "This code was compiled without the flag MY_FLAG" << std::endl;
 #endif
+
+// Document if the version of oomph-lib we're using this driver code
+// with was compiled with or without MPI support.
+#ifdef OOMPH_HAS_MPI
+  oomph_info << "Using a version of oomph-lib that uses mpi." << std::endl;
+#else
+  oomph_info << "Using a version of oomph-lib that does not use mpi." << std::endl;
+#endif
  
 } // end of main
 
