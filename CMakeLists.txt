@@ -21,10 +21,10 @@ cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
 # Name of the project, followed by languages used; the name doesn't
 # really matter, so my_test_project will do. If you don't specify this
 # you'll get a warning. We also use this function to specify which 
-# languages are required (oomph-lib is written entirely in C++, so we suspect
-# your driver code is too).
+# languages are required (oomph-lib is written entirely in C++, 
+# so we suspect your driver code is too).
 #--------------------------------------------------------------
-project(my_test_project C CXX Fortran)
+project(my_test_project CXX)
 
 #--------------------------------------------------------------
 # Locate an installed version of oomph-lib.
@@ -40,7 +40,7 @@ project(my_test_project C CXX Fortran)
 # During oomph-lib's installation, a file
 # oomphlibConfig.cmake is created. It explains to CMake how to
 # locate the oomph-lib header/library files and provides some
-# additional information. We expect this file to sit somewhere 
+# additional information. By default we expect this file to sit somewhere 
 # under a standard prefix (/usr/local, /opt/...). 
 # 
 # If you have installed oomph-lib elsewhere you will have to remember the 
@@ -53,6 +53,8 @@ project(my_test_project C CXX Fortran)
 #    and the required file will be 
 #
 #      /home/joe_cool/oomph-lib/install/lib/cmake/oomphlib/oomphlibConfig.cmake 
+#
+#     (Check that it exists!) 
 #
 #     You'll have to pass the path to the oomph-lib install directory to CMake when building
 #     your current project, using the -Doomphlib_ROOT or -DCMAKE_PREFIX_PATH 
@@ -77,7 +79,7 @@ project(my_test_project C CXX Fortran)
 # 
 #   set(oomphlib_ROOT "/home/joe_cool/oomph-lib/install" CACHE PATH "oomph-lib install prefix")
 # 
-# while this saves you a bit of typing we discourage this as it reduces 
+# While this saves you a bit of typing we discourage this as it reduces 
 # portability. Having hard-coded paths in CMakeLists.txt files
 # is generally considered bad practice.
 #--------------------------------------------------------------
@@ -89,13 +91,14 @@ find_package(oomphlib CONFIG REQUIRED)
 # executable, the sources and the oomph-lib libraries
 # required. (This is a Poisson problem so we need
 # oomph-lib's generic library, the meshes library and
-# the Poisson library). The 
+# the Poisson library).
 #--------------------------------------------------------------
 oomph_add_executable(
   NAME one_d_poisson
   SOURCES one_d_poisson.cc
   LIBRARIES oomph::poisson oomph::meshes oomph::generic)
 
+hierher options directly here
 
 #------------------------------------------------------------
 # Define the second executable: Specify the name of the
@@ -104,7 +107,8 @@ oomph_add_executable(
 # oomph-lib's generic library, the meshes library and
 # the Poisson library). (Note: this is exactly the same
 # as for the previous executable, but we demonstrate below
-# how to specify additional compiler flags for this executable.
+# how to specify additional compiler flags for this executable
+# using native CMame commands
 #--------------------------------------------------------------
 oomph_add_executable(
   NAME one_d_poisson_with_flag
@@ -113,7 +117,8 @@ oomph_add_executable(
 
 
 #--------------------------------------------------------------
-# We wish to provide additional compiler flags for this executable.
+# We wish to provide additional compiler flags for this executable
+# using the native CMake target_compile_options function.
 # NOTE: We can't use the name of the executable directly because
 # our wrapper oomph_add_executable(...) creates a different
 # (hashed) name for it to avoid internal clashes (don't ask!).
@@ -121,7 +126,7 @@ oomph_add_executable(
 # function oomph_get_target_name(...) whose first argument is the NAME 
 # specified in the oomph_add_executable(...) function above; 
 # the second argument returns the hashed name that can then 
-# used for "raw" CMake function calls.
+# used for native CMake function calls.
 #--------------------------------------------------------------
 
 #---------------------------------------------------------------
