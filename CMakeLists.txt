@@ -24,7 +24,7 @@ cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
 # languages are required (oomph-lib is written entirely in C++, 
 # so we suspect your driver code is too).
 #--------------------------------------------------------------
-project(my_test_project CXX)
+project(my_test_project CXX C Fortran)
 
 #--------------------------------------------------------------
 # Locate an installed version of oomph-lib.
@@ -85,6 +85,11 @@ project(my_test_project CXX)
 #--------------------------------------------------------------
 find_package(oomphlib CONFIG REQUIRED)
 
+# hierher MH: Re-enable -Werror when the vector<bool> problem has been fixed.
+
+#####################################################################################
+# Normal build of driver code without any customisation
+#####################################################################################
 
 #--------------------------------------------------------------
 # Define the first executable: Specify the name of the
@@ -98,28 +103,63 @@ oomph_add_executable(
   SOURCES one_d_poisson.cc
   LIBRARIES oomph::poisson oomph::meshes oomph::generic)
 
-hierher options directly here
 
-#------------------------------------------------------------
-# Define the second executable: Specify the name of the
-# executable, the sources and the oomph-lib libraries
-# required. (This is a Poisson problem so we need
-# oomph-lib's generic library, the meshes library and
-# the Poisson library). (Note: this is exactly the same
-# as for the previous executable, but we demonstrate below
-# how to specify additional compiler flags for this executable
-# using native CMame commands
+
+#####################################################################################
+# Three options to customise build by passing compiler options and
+# (macro) definitions
+#####################################################################################
+
+
+#####################################################################################
+# Option 1: Use additional arguments in oomph_add_executable():
+#####################################################################################
+
+#---------------------------------------------------------------
+# The driver code contains the macro
+#
+# #ifdef MY_FLAG
+#   [...]
+# #endif
+# 
+# Such flags can be passed to most compilers using the compiler 
+# flag "-DMY_FLAG".
+# 
+# To achieve this from within the CMakeFiles.txt file, such macros
+# can be passed to the compiler (or rather the preprocessor) by
+# adding it (without the -D prefix!) to the CXX_DEFINITIONS
+# argument.
+#
+# We also provide the option to specify compiler options
+# such as -Wall. 
 #--------------------------------------------------------------
 oomph_add_executable(
-  NAME one_d_poisson_with_flag
+  NAME one_d_poisson_with_flags1
+  SOURCES one_d_poisson.cc
+  LIBRARIES oomph::poisson oomph::meshes oomph::generic
+  CXX_OPTIONS -Wall #-Werror
+  CXX_DEFINITIONS MY_FLAG)
+
+
+#####################################################################################
+# Option 2: Use native CMake commands to add the relevant flags afterwards
+#####################################################################################
+
+#------------------------------------------------------------
+# You can also use native CMake commands to achieve this.
+# To demonstrate this, here's another target, defined without
+# the CXX_OPTIONS and CXX_DEFINITIONS arguments:
+#--------------------------------------------------------------
+oomph_add_executable(
+  NAME one_d_poisson_with_flags2
   SOURCES one_d_poisson.cc
   LIBRARIES oomph::poisson oomph::meshes oomph::generic)
 
-
 #--------------------------------------------------------------
-# We wish to provide additional compiler flags for this executable
-# using the native CMake target_compile_options function.
-# NOTE: We can't use the name of the executable directly because
+# Note that when providing additional compiler flags using the native
+# CMake target_compile_options function (or using other native
+# CMake functions that affect a given target) we can't
+# use the name of the executable directly because
 # our wrapper oomph_add_executable(...) creates a different
 # (hashed) name for it to avoid internal clashes (don't ask!).
 # You therefore have to obtain the actual target name from the 
@@ -132,34 +172,38 @@ oomph_add_executable(
 #---------------------------------------------------------------
 # Get hashed target name
 #---------------------------------------------------------------
-oomph_get_target_name(one_d_poisson_with_flag HASHED_TARGET_NAME)
+oomph_get_target_name(one_d_poisson_with_flags2 HASHED_TARGET_NAME)
 
 
-#--------------------------------------------------------------------
-# The driver code contains the macro
-#
-# #ifdef MY_FLAG
-#   [...]
-# #endif
-# 
-# Such flags can be passed to most compilers using the compiler 
-# flag "-DMY_FLAG".
-# 
-# If you're working on your own and only ever use a compiler that
-# handles macros this way, you could uncomment the following line to 
-# achieve this
-#
-#    target_compile_options(${HASHED_TARGET_NAME} PRIVATE -DMY_FLAG) 
-#
-# This function passes the flag "-DMY_FLAG" verbatim to the compiler.
-# The function can therefore also be used to specify other compiler-specific
-# flags like -O3 or -Wall, say.
-#
-# However, CMake provides a compiler-independent way of specifying 
-# compiler macros: the target_compile_definitions function which simply 
-# takes the flag (without any compiler-specific prefixes like "-D"):
-#--------------------------------------------------------------------------
+#---------------------------------------------------------------------
+# Now use the hashed name when using the native CMake functions:
+#---------------------------------------------------------------------
 target_compile_definitions(${HASHED_TARGET_NAME} PRIVATE MY_FLAG)
+target_compile_options(${HASHED_TARGET_NAME} PRIVATE -Wall) #  -Werror) 
+
+
+
+
+#####################################################################################
+# Option 3: Do it all with native CMake commands
+#####################################################################################
+
+# Specify the target name and source(s)
+add_executable(one_d_poisson_with_flags3 one_d_poisson.cc)
+
+# Link against oomph-lib's poisson library
+target_link_libraries(one_d_poisson_with_flags3 PRIVATE oomph::poisson)
+
+# Compiler options
+target_compile_options(one_d_poisson_with_flags3 PRIVATE -Wall) # -Werror)
+
+# Preprocessor macros
+target_compile_definitions(one_d_poisson_with_flags3 PRIVATE MY_FLAG)
+
+# Pull in the information about oomph-lib build
+target_compile_definitions(one_d_poisson_with_flags3 PRIVATE ${OOMPH_COMPILE_DEFINITIONS})
+
+
 
 
 
