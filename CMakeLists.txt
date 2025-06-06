@@ -85,7 +85,6 @@ project(my_test_project CXX C Fortran)
 #--------------------------------------------------------------
 find_package(oomphlib CONFIG REQUIRED)
 
-# hierher MH: Re-enable -Werror when the vector<bool> problem has been fixed.
 
 #####################################################################################
 # Normal build of driver code without any customisation
@@ -137,7 +136,7 @@ oomph_add_executable(
   NAME one_d_poisson_with_flags1
   SOURCES one_d_poisson.cc
   LIBRARIES oomph::poisson oomph::meshes oomph::generic
-  CXX_OPTIONS -Wall #-Werror
+  CXX_OPTIONS -Wall 
   CXX_DEFINITIONS MY_FLAG)
 
 
@@ -179,7 +178,7 @@ oomph_get_target_name(one_d_poisson_with_flags2 HASHED_TARGET_NAME)
 # Now use the hashed name when using the native CMake functions:
 #---------------------------------------------------------------------
 target_compile_definitions(${HASHED_TARGET_NAME} PRIVATE MY_FLAG)
-target_compile_options(${HASHED_TARGET_NAME} PRIVATE -Wall) #  -Werror) 
+target_compile_options(${HASHED_TARGET_NAME} PRIVATE -Wall)
 
 
 
