@@ -315,7 +315,27 @@ int main()
 #else
   oomph_info << "Using a version of oomph-lib that does not use mpi." << std::endl;
 #endif
+
  
+// Code used to illustrate how to use compiler flags from cmake
+// passed through from oomph-lib build:
+#ifdef OOMPH_3_5_BRICK_FOR_MESHING_ONLY_NO_INTEGRATION
+  oomph_info
+   << "Using a version for which OOMPH_3_5_BRICK_FOR_MESHING_ONLY_NO_INTEGRATION is defined."
+   << std::endl;
+#else
+  oomph_info
+   << "Using a version for which OOMPH_3_5_BRICK_FOR_MESHING_ONLY_NO_INTEGRATION is not defined."
+   << std::endl;
+#endif
+
+#ifdef OOMPH_SPECIAL_FLAG
+ oomph_info << "Using a version for which  OOMPH_SPECIAL_FLAG is defined." << std::endl;
+#else
+ oomph_info << "Using a version for which  OOMPH_SPECIAL_FLAG is not defined." << std::endl;
+#endif
+
+
 } // end of main
 
 
