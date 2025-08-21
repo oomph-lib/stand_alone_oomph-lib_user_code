@@ -205,6 +205,61 @@ target_compile_definitions(one_d_poisson_with_flags3 PRIVATE ${OOMPH_COMPILE_DEF
 
 
 
+#####################################################################################
+# Option 4: Allow enabling the compiler macro via the cmake command line when
+# configuring the project
+#####################################################################################
+
+#------------------------------------------------------------
+#  Here's the general setup, without any flags
+#--------------------------------------------------------------
+oomph_add_executable(
+  NAME one_d_poisson_with_flags4
+  SOURCES one_d_poisson.cc
+  LIBRARIES oomph::poisson oomph::meshes oomph::generic)
+
+#--------------------------------------------------------------
+# Note that when providing additional compiler flags using the native
+# CMake target_compile_options function (or using other native
+# CMake functions that affect a given target) we can't
+# use the name of the executable directly because
+# our wrapper oomph_add_executable(...) creates a different
+# (hashed) name for it to avoid internal clashes (don't ask!).
+# You therefore have to obtain the actual target name from the 
+# function oomph_get_target_name(...) whose first argument is the NAME 
+# specified in the oomph_add_executable(...) function above; 
+# the second argument returns the hashed name that can then 
+# used for native CMake function calls.
+#--------------------------------------------------------------
+
+#---------------------------------------------------------------
+# Get hashed target name
+#---------------------------------------------------------------
+oomph_get_target_name(one_d_poisson_with_flags4 HASHED_TARGET_NAME)
+
+
+#---------------------------------------------------------------
+# Conditional application of the MY_FLAG macro. Enable this
+# by configuring the project with
+#
+#   cmake -G Ninja -B build -DCMAKE_PREFIX_PATH=/home/joe_cool/oomph-lib/install -DMY_FLAG=ON
+#
+# say. Configuring with
+#
+#   cmake -G Ninja -B build -DCMAKE_PREFIX_PATH=/home/joe_cool/oomph-lib/install
+#
+# is equivalent to
+#
+#   cmake -G Ninja -B build -DCMAKE_PREFIX_PATH=/home/joe_cool/oomph-lib/install -DMY_FLAG=OFF
+#
+#---------------------------------------------------------------
+if(MY_FLAG)
+    target_compile_definitions(${HASHED_TARGET_NAME} PRIVATE MY_FLAG)
+endif()
+
+
+
+#####################################################################################
 
 #--------------------------------------------------------------------------
 # Final comment: The oomphlibConfig.cmake file contains information about
