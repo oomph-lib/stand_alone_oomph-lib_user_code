@@ -87,7 +87,7 @@ find_package(oomphlib CONFIG REQUIRED)
 
 
 #####################################################################################
-# Normal build of driver code without any customisation
+# Normal build of driver code without any customisation (by default!). 
 #####################################################################################
 
 #--------------------------------------------------------------
@@ -101,6 +101,39 @@ oomph_add_executable(
   NAME one_d_poisson
   SOURCES one_d_poisson.cc
   LIBRARIES oomph::poisson oomph::meshes oomph::generic)
+
+#--------------------------------------------------------------
+# Note that when providing additional compiler flags using the native
+# CMake target_compile_options function (or using other native
+# CMake functions that affect a given target) we can't
+# use the name of the executable directly because
+# our wrapper oomph_add_executable(...) creates a different
+# (hashed) name for it to avoid internal clashes (don't ask!).
+# You therefore have to obtain the actual target name from the 
+# function oomph_get_target_name(...) whose first argument is the NAME 
+# specified in the oomph_add_executable(...) function above; 
+# the second argument returns the hashed name that can then 
+# used for native CMake function calls.
+#--------------------------------------------------------------
+
+#---------------------------------------------------------------
+# Get hashed target name
+#---------------------------------------------------------------
+oomph_get_target_name(one_d_poisson HASHED_TARGET_NAME)
+
+#-------------------------------------------------------------
+# Option to add -DMY_FLAG to C++ compilation ; activate
+# by configuring project with
+#
+#   cmake [...] -DMY_FLAG=ON
+#
+# Do not brute force such flags into the build by configuring
+# with -DCMAKE_CXX_FLAGS. It would overwrite flags defined
+# in the oomph-lib build!
+#-------------------------------------------------------------
+if(MY_FLAG) 
+    target_compile_definitions(${HASHED_TARGET_NAME} PRIVATE MY_FLAG)
+endif()
 
 
 
@@ -194,7 +227,7 @@ add_executable(one_d_poisson_with_flags3 one_d_poisson.cc)
 target_link_libraries(one_d_poisson_with_flags3 PRIVATE oomph::poisson)
 
 # Compiler options
-target_compile_options(one_d_poisson_with_flags3 PRIVATE -Wall) # -Werror)
+target_compile_options(one_d_poisson_with_flags3 PRIVATE -Wall) 
 
 # Preprocessor macros
 target_compile_definitions(one_d_poisson_with_flags3 PRIVATE MY_FLAG)
